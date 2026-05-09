@@ -1683,7 +1683,7 @@ final class StateMachine {
 
     /// 単語登録中に空文字列でqキーを押したときにカタカナで確定する
     @MainActor private func fixRegisteringWordAsKatakana(action: Action, specialState: SpecialState?) -> Bool {
-        if case .register(let registerState, _) = specialState,
+        if case .register(let registerState, let prev) = specialState,
             registerState.text.isEmpty,
             // .toggleAndFixKanaのキーだけ対象にするため、Global.keyBinding.actionでチェックする
             Global.keyBinding.action(
@@ -1704,9 +1704,15 @@ final class StateMachine {
                 state.inputMode = registerState.prev.mode
                 inputMethodEventSubject.send(.modeChanged(registerState.prev.mode))
             }
-            state.inputMethod = .normal
-            state.specialState = nil
             let fixedText = registerState.prev.composing.string(for: fixedInputMode, kanaRule: Global.kanaRule)
+
+            state.inputMethod = .normal
+            // 単語登録が入れ子になっていた場合などは一つ前の状態に戻る
+            if let last = prev.last {
+                state.specialState = .register(last, prev: prev.dropLast())
+            } else {
+                state.specialState = nil
+            }
             if let okuri = registerState.okuri {
                 addFixedText(fixedText + okuri)
             } else {
