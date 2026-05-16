@@ -84,9 +84,6 @@ struct GeneralView: View {
                     Toggle(isOn: $settingsViewModel.backToSelectingFromRegistering, label: {
                         Text("Back to selecting candidates from empty word registration")
                     })
-                    Toggle(isOn: $settingsViewModel.fixRegisteringWordAsKatakana, label: {
-                        Text("Fix katakana from empty word registration")
-                    })
                 }
                 Section {
                     Toggle(isOn: $settingsViewModel.ignoreUserDictInPrivateMode, label: {

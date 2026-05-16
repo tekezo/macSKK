@@ -61,8 +61,6 @@ import Combine
     static var ignoreLeadingSpacesWhenRegistering = true
     /// 単語登録中に空文字列で前候補キーを押したときに候補選択に戻るか
     static var backToSelectingFromRegistering = false
-    /// 単語登録中に空文字列でqキーを押したときにカタカナで確定するか
-    static var fixRegisteringWordAsKatakana = false
     /// 現在のモードを表示するパネル
     private let inputModePanel: InputModePanel
     /// 変換候補を表示するパネル

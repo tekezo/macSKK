@@ -120,13 +120,6 @@ final class StateMachine {
                 break
             }
         case .toggleKana:
-            // 単語登録中に空文字列でqキーを押したときにカタカナで確定する（設定されている場合）
-            if Global.fixRegisteringWordAsKatakana,
-                fixRegisteringWordAsKatakana(action: action, specialState: specialState)
-            {
-                return true
-            }
-
             switch state.inputMode {
             case .hiragana:
                 state.inputMode = .katakana
@@ -447,17 +440,7 @@ final class StateMachine {
                 return true
             }
             break
-        case nil:
-            // 単語登録中に空文字列でqキーを押したときにカタカナで確定する（設定されている場合）
-            // toggleKanaのキーが指定されておらず、toggleAndFixKanaのキーだけが指定されている場合、
-            // 単語登録中のtoggleAndFixKanaはkeyBindがnilになるため、ここで処理する
-            if Global.fixRegisteringWordAsKatakana,
-                fixRegisteringWordAsKatakana(action: action, specialState: specialState)
-            {
-                return true
-            }
-            break
-        case .space, .shiftSpace, .unregister, .toggleAndFixKana, .affix:
+        case .space, .shiftSpace, .unregister, .toggleAndFixKana, .affix, nil:
             break
         }
 
@@ -1679,49 +1662,6 @@ final class StateMachine {
     /// 「う゛」は「ゔ」にしてから引く
     @MainActor func candidates(for yomi: String, option: DictReferringOption? = nil) -> [Candidate] {
         return Global.dictionary.referDicts(yomi.replacing("う゛", with: "ゔ"), option: option)
-    }
-
-    /// 単語登録中に空文字列でqキーを押したときにカタカナで確定する
-    @MainActor private func fixRegisteringWordAsKatakana(action: Action, specialState: SpecialState?) -> Bool {
-        if case .register(let registerState, let prev) = specialState,
-            registerState.text.isEmpty,
-            // .toggleAndFixKanaのキーだけ対象にするため、Global.keyBinding.actionでチェックする
-            Global.keyBinding.action(
-                event: action.event,
-                inputMode: state.inputMode,
-                inputMethod: .composing(registerState.prev.composing)) == .toggleAndFixKana
-        {
-            let fixedInputMode: InputMode
-            switch registerState.prev.mode {
-            case .hiragana:
-                fixedInputMode = .katakana
-            case .katakana, .hankaku:
-                fixedInputMode = .hiragana
-            case .eisu, .direct:
-                return false
-            }
-            if state.inputMode != registerState.prev.mode {
-                state.inputMode = registerState.prev.mode
-                inputMethodEventSubject.send(.modeChanged(registerState.prev.mode))
-            }
-            let fixedText = registerState.prev.composing.string(for: fixedInputMode, kanaRule: Global.kanaRule)
-
-            state.inputMethod = .normal
-            // 単語登録が入れ子になっていた場合などは一つ前の状態に戻る
-            if let last = prev.last {
-                state.specialState = .register(last, prev: prev.dropLast())
-            } else {
-                state.specialState = nil
-            }
-            if let okuri = registerState.okuri {
-                addFixedText(fixedText + okuri)
-            } else {
-                addFixedText(fixedText)
-            }
-            return true
-        } else {
-            return false
-        }
     }
 
     /// 単語登録中から候補選択に戻る
