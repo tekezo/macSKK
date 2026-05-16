@@ -258,6 +258,8 @@ final class SettingsViewModel: ObservableObject {
     @Published var ignoreLeadingSpacesWhenRegistering: Bool
     /// 単語登録中に空文字列で前候補キーを押したときに候補選択に戻るか
     @Published var backToSelectingFromRegistering: Bool
+    /// 単語登録中に空文字列でバックスペースキーを押したときに候補選択に戻るか
+    @Published var backToSelectingFromRegisteringByBackspace: Bool
     /// 利用可能なフォントファミリー名
     @Published var availableFontFamilies: [String] = []
     /// 利用可能なローマ字かな変換ルール
@@ -350,6 +352,7 @@ final class SettingsViewModel: ObservableObject {
         registerKatakana = UserDefaults.app.bool(forKey: UserDefaultsKeys.registerKatakana)
         ignoreLeadingSpacesWhenRegistering = UserDefaults.app.bool(forKey: UserDefaultsKeys.ignoreLeadingSpacesWhenRegistering)
         backToSelectingFromRegistering = UserDefaults.app.bool(forKey: UserDefaultsKeys.backToSelectingFromRegistering)
+        backToSelectingFromRegisteringByBackspace = UserDefaults.app.bool(forKey: UserDefaultsKeys.backToSelectingFromRegisteringByBackspace)
         selectingBackspace = SelectingBackspace(rawValue: UserDefaults.app.integer(forKey: UserDefaultsKeys.selectingBackspace)) ?? SelectingBackspace.default
         comma = Punctuation.Comma(rawValue: UserDefaults.app.integer(forKey: UserDefaultsKeys.punctuation)) ?? .default
         period = Punctuation.Period(rawValue: UserDefaults.app.integer(forKey: UserDefaultsKeys.punctuation)) ?? .default
@@ -408,6 +411,7 @@ final class SettingsViewModel: ObservableObject {
         Global.registerKatakana = registerKatakana
         Global.ignoreLeadingSpacesWhenRegistering = ignoreLeadingSpacesWhenRegistering
         Global.backToSelectingFromRegistering = backToSelectingFromRegistering
+        Global.backToSelectingFromRegisteringByBackspace = backToSelectingFromRegisteringByBackspace
         Global.inputModePanel.updateColorSets(inputModeColorSets)
         Global.showMarkedTextMarker = showMarkedTextMarker
 
@@ -820,6 +824,12 @@ final class SettingsViewModel: ObservableObject {
             Global.backToSelectingFromRegistering = backToSelectingFromRegistering
         }.store(in: &cancellables)
 
+        $backToSelectingFromRegisteringByBackspace.dropFirst().sink { backToSelectingFromRegisteringByBackspace in
+            UserDefaults.app.set(backToSelectingFromRegisteringByBackspace, forKey: UserDefaultsKeys.backToSelectingFromRegisteringByBackspace)
+            logger.log("単語登録中に空文字列でバックスペースキーを押したときに候補選択に戻る設定を\(backToSelectingFromRegisteringByBackspace ? "有効" : "無効", privacy: .public)に変更しました")
+            Global.backToSelectingFromRegisteringByBackspace = backToSelectingFromRegisteringByBackspace
+        }.store(in: &cancellables)
+
         $selectedKanaRule.dropFirst().sink { [weak self] selectedKanaRule in
             guard let self else { return }
             if selectedKanaRule.isEmpty {
@@ -899,6 +909,7 @@ final class SettingsViewModel: ObservableObject {
         registerKatakana = false
         ignoreLeadingSpacesWhenRegistering = true
         backToSelectingFromRegistering = false
+        backToSelectingFromRegisteringByBackspace = false
         systemDict = .daijirin
         selectingBackspace = SelectingBackspace.default
         comma = Punctuation.default.comma

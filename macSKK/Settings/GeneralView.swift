@@ -54,6 +54,9 @@ struct GeneralView: View {
                 Toggle(isOn: $settingsViewModel.backToSelectingFromRegistering, label: {
                     Text("Back to selecting candidates from empty word registration")
                 })
+                Toggle(isOn: $settingsViewModel.backToSelectingFromRegisteringByBackspace, label: {
+                    Text("Back to selecting candidates from empty word registration with backspace")
+                })
                 Toggle(isOn: $settingsViewModel.showInputIconModal, label: {
                     Text("Show Input Mode Modal")
                 })

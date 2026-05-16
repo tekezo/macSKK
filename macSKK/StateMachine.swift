@@ -299,10 +299,9 @@ final class StateMachine {
             return false
         case .backspace:
             if let specialState = state.specialState {
-                // 単語登録中に空文字列で前候補キーを押したときに候補選択に戻る（設定されている場合）
-                if Global.backToSelectingFromRegistering,
+                // 単語登録中に空文字列でバックスペースキーを押したときに候補選択に戻る（設定されている場合）
+                if Global.backToSelectingFromRegisteringByBackspace,
                     case .register(let registerState, let prevRegisterStates) = specialState,
-                    Global.selectingBackspace == .cancel,
                     registerState.text.isEmpty
                 {
                     backToSelectingFromRegister(registerState: registerState, prevRegisterStates: prevRegisterStates)
