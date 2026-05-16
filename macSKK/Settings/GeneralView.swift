@@ -51,6 +51,9 @@ struct GeneralView: View {
                 Toggle(isOn: $settingsViewModel.ignoreLeadingSpacesWhenRegistering, label: {
                     Text("Ignore leading spaces when registering a word")
                 })
+                Toggle(isOn: $settingsViewModel.backToSelectingFromRegistering, label: {
+                    Text("Back to selecting candidates from empty word registration")
+                })
                 Toggle(isOn: $settingsViewModel.showInputIconModal, label: {
                     Text("Show Input Mode Modal")
                 })
@@ -79,11 +82,6 @@ struct GeneralView: View {
                             Text(selectingBackspace.description).tag(selectingBackspace)
                         }
                     }
-                }
-                Section {
-                    Toggle(isOn: $settingsViewModel.backToSelectingFromRegistering, label: {
-                        Text("Back to selecting candidates from empty word registration")
-                    })
                 }
                 Section {
                     Toggle(isOn: $settingsViewModel.ignoreUserDictInPrivateMode, label: {
