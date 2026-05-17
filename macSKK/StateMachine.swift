@@ -299,8 +299,8 @@ final class StateMachine {
             return false
         case .backspace:
             if let specialState = state.specialState {
-                // 単語登録中に空文字列でバックスペースキーを押したときに候補選択に戻る（設定されている場合）
-                if Global.backToSelectingFromRegisteringByBackspace,
+                // 単語登録中に空文字列で前候補キーもしくはバックスペースキーで候補選択に戻る（設定されている場合）
+                if Global.backToSelectingFromRegistering,
                     case .register(let registerState, let prevRegisterStates) = specialState,
                     registerState.text.isEmpty
                 {
@@ -430,7 +430,7 @@ final class StateMachine {
             // 何もしない (OSがIMEの切り替えはしてくれる)
             return true
         case .backwardCandidate:
-            // 単語登録中に空文字列で前候補キーを押したときに候補選択に戻る（設定されている場合）
+            // 単語登録中に空文字列で前候補キーもしくはバックスペースキーで候補選択に戻る（設定されている場合）
             if Global.backToSelectingFromRegistering,
                 case .register(let registerState, let prevRegisterStates) = specialState,
                 registerState.text.isEmpty

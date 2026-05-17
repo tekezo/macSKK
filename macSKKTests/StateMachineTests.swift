@@ -24,7 +24,6 @@ final class StateMachineTests: XCTestCase {
         Global.keyBinding = KeyBindingSet.defaultKeyBindingSet
         Global.ignoreLeadingSpacesWhenRegistering = true
         Global.backToSelectingFromRegistering = false
-        Global.backToSelectingFromRegisteringByBackspace = false
     }
 
     @MainActor func testHandleNormalSimple() {
@@ -3016,7 +3015,7 @@ final class StateMachineTests: XCTestCase {
     }
 
     @MainActor func testHandleRegisteringBackToSelecting() {
-        // 単語登録中に空文字列で前候補キーを押したときに候補選択に戻る（設定されているときの挙動）
+        // 単語登録中に空文字列で前候補キーもしくはバックスペースキーで候補選択に戻る（設定されているときの前候補キーの挙動）
         Global.backToSelectingFromRegistering = true
         Global.dictionary.setEntries(["と": [Word("戸"), Word("都")]])
 
@@ -3049,7 +3048,7 @@ final class StateMachineTests: XCTestCase {
     }
 
     @MainActor func testHandleRegisteringBackToSelectingDisabled() {
-        // 単語登録中に空文字列で前候補キーを押したときに候補選択に戻る（設定されていないときの挙動）
+        // 単語登録中に空文字列で前候補キーもしくはバックスペースキーで候補選択に戻る（設定されていないときの前候補キーの挙動）
         Global.dictionary.setEntries(["と": [Word("戸"), Word("都")]])
 
         let stateMachine = StateMachine(initialState: IMEState(inputMode: .hiragana))
@@ -3076,8 +3075,8 @@ final class StateMachineTests: XCTestCase {
     }
 
     @MainActor func testHandleRegisteringBackToSelectingByBackspace() {
-        // 単語登録中に空文字列でバックスペースキーを押したときに候補選択に戻る（設定されているときの挙動）
-        Global.backToSelectingFromRegisteringByBackspace = true
+        // 単語登録中に空文字列で前候補キーもしくはバックスペースキーで候補選択に戻る（設定されているときのバックスペースキーの挙動）
+        Global.backToSelectingFromRegistering = true
         Global.dictionary.setEntries(["と": [Word("戸"), Word("都")]])
 
         let stateMachine = StateMachine(initialState: IMEState(inputMode: .hiragana))
@@ -3105,7 +3104,7 @@ final class StateMachineTests: XCTestCase {
     }
 
     @MainActor func testHandleRegisteringBackToSelectingByBackspaceDisabled() {
-        // 単語登録中に空文字列でバックスペースキーを押したときに候補選択に戻る（設定されていないときの挙動）
+        // 単語登録中に空文字列で前候補キーもしくはバックスペースキーで候補選択に戻る（設定されていないときのバックスペースキーの挙動）
         Global.dictionary.setEntries(["と": [Word("戸"), Word("都")]])
 
         let stateMachine = StateMachine(initialState: IMEState(inputMode: .hiragana))

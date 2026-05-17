@@ -59,10 +59,8 @@ import Combine
     static var registerKatakana = false
     /// 単語登録中に先頭のスペースを無視するか
     static var ignoreLeadingSpacesWhenRegistering = true
-    /// 単語登録中に空文字列で前候補キーを押したときに候補選択に戻るか
+    /// 単語登録中に空文字列で前候補キーもしくはバックスペースキーで候補選択に戻るか
     static var backToSelectingFromRegistering = false
-    /// 単語登録中に空文字列でバックスペースキーを押したときに候補選択に戻るか
-    static var backToSelectingFromRegisteringByBackspace = false
     /// 現在のモードを表示するパネル
     private let inputModePanel: InputModePanel
     /// 変換候補を表示するパネル
