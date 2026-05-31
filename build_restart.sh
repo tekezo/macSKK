@@ -2,7 +2,7 @@
 
 set -e
 # ビルド
-xcodebuild -workspace macSKK.xcodeproj/project.xcworkspace -scheme macSKK -configuration Debug DEVELOPMENT_TEAM= clean archive -archivePath build/archive.xcarchive
+xcodebuild -workspace macSKK.xcodeproj/project.xcworkspace -scheme macSKK -configuration Release DEVELOPMENT_TEAM= clean archive -archivePath build/archive.xcarchive
 
 # 上書き
 if [[ -d ~/Library/Input\ Methods/macSKK.app ]]; then
